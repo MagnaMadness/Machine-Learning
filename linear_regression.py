@@ -103,3 +103,23 @@ def grad_des_linreg(X, y, learning_rate, iter):
 
 w_gradient_descent = grad_des_linreg(X_train, y_train, 0.01, 1000)
 print(w_gradient_descent)
+
+def stoch_grad_des_linreg(X, y, learning_rate, iter):
+
+    n_samples, n_features = X.shape
+    w = np.zeros(n_features)
+
+    for i in range(0, iter):
+
+        for j in range(0, n_samples):
+
+            X_j = X[j]
+            y_j = y[j]
+
+            grad = (X_j.dot(w) - y_j) * X_j
+            w = w - (learning_rate * grad)
+
+    return w
+
+w_stoch_gradient_descent = stoch_grad_des_linreg(X_train, y_train, 0.01, 1000)
+print(w_stoch_gradient_descent)
