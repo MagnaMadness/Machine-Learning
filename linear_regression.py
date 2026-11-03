@@ -136,6 +136,57 @@ def stoch_grad_des_linreg(X, y, learning_rate, iter):
 w_stoch_gradient_descent = stoch_grad_des_linreg(X_train, y_train, 0.01, 1000)
 print(w_stoch_gradient_descent)
 
+def apply_normalization(X, mean, std):
+    X_new = (X-mean)/(std + 1e-8)
+    return X_new
+
+X_norm_validation = apply_normalization(X_raw_validation, mean, std)
+X_norm_test = apply_normalization(X_raw_test, mean, std)
+X_validation = add_intercept(X_norm_validation)
+X_test = add_intercept(X_norm_test)
+
+def mean_squared_error(y_true, y_pred):
+    return np.mean((y_true - y_pred) ** 2)
+    
+#hyperparameter optimization using X_validation
+learning_rates = [0.001, 0.01, 0.05, 0.1]
+best_lr = learning_rates[0]
+best_val_mse = float('inf')
+
+for lr in learning_rates:
+    w_temp = grad_des_linreg(X_train, y_train, learning_rate=lr, iter=1000)
+
+    y_val_pred = X_validation.dot(w_temp)
+    val_mse = mean_squared_error(y_validation, y_val_pred)
+    
+    print(f"LR: {lr}, Validation MSE: {val_mse}")
+    
+    if val_mse < best_val_mse:
+        best_val_mse = val_mse
+        best_lr = lr
+
+print(f"Best Learning Rate selected: {best_lr}")
+
+#Metrics using X_test
+w_final = grad_des_linreg(X_train, y_train, learning_rate=best_lr, iter=1500)
+y_test_pred = X_test.dot(w_final)
+# Required Evaluation Metrics for Linear Regression
+def mean_absolute_error(y_true, y_pred):
+    return np.mean(np.abs(y_true - y_pred))
+
+def r2_score(y_true, y_pred):
+    ss_res = np.sum((y_true - y_pred) ** 2)
+    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+    return 1 - (ss_res / ss_tot)
+
+test_mse = mean_squared_error(y_test, y_test_pred)
+test_mae = mean_absolute_error(y_test, y_test_pred)
+test_r2 = r2_score(y_test, y_test_pred)
+
+print(f"Final Test MSE: {test_mse}")
+print(f"Final Test MAE: {test_mae}")
+print(f"Final Test R2 Score: {test_r2}")
+
 
 def sigm(z):
 
