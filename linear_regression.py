@@ -1,10 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sklearn.model_selection import train_test_split, KFold, StratifiedFold
 
-import numpy as np
-import pandas as pd
 file_path = 'sample_data.csv'
 np.random.seed(138)
 
