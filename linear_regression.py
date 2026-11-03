@@ -170,7 +170,7 @@ print(f"Best Learning Rate selected: {best_lr}")
 #Metrics using X_test
 w_final = grad_des_linreg(X_train, y_train, learning_rate=best_lr, iter=1500)
 y_test_pred = X_test.dot(w_final)
-# Required Evaluation Metrics for Linear Regression
+
 def mean_absolute_error(y_true, y_pred):
     return np.mean(np.abs(y_true - y_pred))
 
