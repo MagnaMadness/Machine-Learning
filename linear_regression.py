@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sklearn.model_selection import train_test_split, KFold, StratifiedFold
 
+import numpy as np
+import pandas as pd
 file_path = 'sample_data.csv'
 np.random.seed(138)
 
@@ -19,7 +21,7 @@ X_raw, y_raw = load_csv(file_path, 'Quality_Score')
 # print(X_raw)
 # print(y_raw)
 
-def split_data(X, train_ratio, validation_ratio):
+def split_data(X, y, train_ratio, validation_ratio):
 
     num_datapoints = len(X)
     indices = np.random.permutation(num_datapoints)
@@ -34,10 +36,13 @@ def split_data(X, train_ratio, validation_ratio):
     X_validation = X[validation_idx]
     X_test = X[test_idx]
 
-    return X_train, X_validation, X_test
+    y_train = y[train_idx]
+    y_validation = y[validation_idx]
+    y_test = y[test_idx]
 
-X_raw_train, X_raw_validation, X_raw_test = split_data(X_raw, 0.7, 0.15)
-# print(X_raw_train)
+    return X_train, X_validation, X_test, y_train, y_validation, y_test
+
+X_raw_train, X_raw_validation, X_raw_test, y_train, y_validation, y_test = split_data(X_raw, y_raw, 0.7, 0.15)
 # print(X_raw_validation)
 # print(X_raw_test)
 
@@ -75,9 +80,11 @@ def direct_linreg(X, y):
     except Exception as E:
 
         print(E)
-        U = (0.01 * np.eye(X.shape[0])) + XT.dot(X)
+        U = (0.01 * np.eye(X.shape[1])) + XT.dot(X)
         w = np.linalg.inv(U).dot(XT).dot(y)
 
     return w
 
-w = direct_linreg(X_train, y_raw)
+w = direct_linreg(X_train, y_train)
+
+print(w)
