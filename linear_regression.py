@@ -55,9 +55,9 @@ def normalize_data(X):
 
     X_new = (X - mean) / (std + eps)
 
-    return X_new
+    return X_new, mean, std
 
-X_norm_train = normalize_data(X_raw_train)
+X_norm_train, mean, std = normalize_data(X_raw_train)
 # print(X_norm_train)
 
 def add_bias(X):
@@ -85,6 +85,21 @@ def direct_linreg(X, y):
 
     return w
 
-w = direct_linreg(X_train, y_train)
+w_direct = direct_linreg(X_train, y_train)
+print(w_direct)
 
-print(w)
+def grad_des_linreg(X, y, learning_rate, iter):
+
+    n_samples, n_features = X.shape
+    w = np.zeros(n_features)
+    XT = X.T
+
+    for i in range(0, iter):
+
+        grad = (XT.dot((X.dot(w) - y))) / n_samples
+        w = w - (learning_rate * grad)
+
+    return w
+
+w_gradient_descent = grad_des_linreg(X_train, y_train, 0.01, 1000)
+print(w_gradient_descent)
