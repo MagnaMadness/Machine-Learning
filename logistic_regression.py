@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
-file_path = 'sample_data.csv'
-np.random.seed(138)
+file_path = 'data1_logistic.csv'
+np.random.seed(67)
 
 def load_csv(file_path, target_column):
 
@@ -14,19 +13,11 @@ def load_csv(file_path, target_column):
 
     return X, y
 
-X_raw, y_raw = load_csv(file_path, 'Quality_Score')
-
-
-'''if we dont have a heading in the csv file, and its just 2 coulms, we can do this:
 data = np.loadtxt(file_path, delimiter=",")
-X = np.array(data[:, 0])
-y = np.array(data[:, -1])
+X_raw = np.array(data[:, :-1])
+y_raw = np.array(data[:, -1])
 
-if there are 3 or more columns (X1, X2, X3, y... etc) then we can just:
-data = np.loadtxt(file_path, delimiter=",")
-X = np.array(data[:, :-1])
-y = np.array(data[:, -1])
-'''
+# X_raw, y_raw = load_csv(file_path, 'Quality_Score')
 # print(X_raw)
 # print(y_raw)
 
@@ -78,7 +69,6 @@ def add_intercept(X):
 X_train = add_intercept(X_norm_train)
 # print(X_train)
 
-
 def sigm(z):
 
     sigmoid = 1 / (1 + np.exp(-np.clip(z, -100, 100)))
@@ -102,4 +92,51 @@ def logreg_grad_des(X, y, learning_rate, iter):
     return w
 
 w_logreg_grad_descent = logreg_grad_des(X_train, y_train, 0.01, 1000)
-print(w_logreg_grad_descent)
+# print(w_logreg_grad_descent)
+
+
+
+def apply_normalization(X, mean, std):
+    X_new = (X-mean)/(std + 1e-8)
+    return X_new
+
+X_norm_validation = apply_normalization(X_raw_validation, mean, std)
+X_norm_test = apply_normalization(X_raw_test, mean, std)
+X_validation = add_intercept(X_norm_validation)
+X_test = add_intercept(X_norm_test)
+
+def mean_squared_error(y_true, y_pred):
+    return np.mean((y_true - y_pred) ** 2)
+    
+#hyperparameter optimization using X_validation (for logistic regression)
+
+learning_rates = [0.001, 0.01, 0.05, 0.1]
+best_lr = learning_rates[0]
+best_val_acc = 0
+
+for lr in learning_rates:
+
+    w_temp = logreg_grad_des(X_train, y_train, learning_rate=lr, iter=1000)
+
+    probabilities = sigm(X_validation.dot(w_temp))
+    y_val_pred = np.where(probabilities >= 0.5, 1, 0)
+    val_acc = np.mean(y_validation == y_val_pred)
+    
+    print(f"LR: {lr}, Validation Accuracy: {val_acc}")
+    
+    if val_acc > best_val_acc:
+        best_val_acc = val_acc
+        best_lr = lr
+
+print(f"Best Learning Rate selected: {best_lr}")
+
+
+w_final = logreg_grad_des(X_train, y_train, learning_rate=best_lr, iter=1500)
+
+test_probabilities = sigm(X_test.dot(w_final))
+y_test_pred = np.where(test_probabilities >= 0.5, 1, 0)
+
+test_accuracy = np.mean(y_test == y_test_pred)
+print(f"Final Test Accuracy: {test_accuracy}")
+
+
