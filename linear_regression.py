@@ -187,4 +187,22 @@ print(f"Final Test MSE: {test_mse}")
 print(f"Final Test MAE: {test_mae}")
 print(f"Final Test R2 Score: {test_r2}")
 
+# Actual vs Predicted Plot
+plt.scatter(y_test, y_test_pred, color='blue', alpha=0.6, label='Predictions')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linestyle='--', label='Perfect Fit')
+plt.title('Actual vs Predicted Values (Test Set)')
+plt.xlabel('Actual Values')
+plt.ylabel('Predicted Values')
+plt.legend()
+plt.show()
+
+# Residuals Plot
+residuals = y_test - y_test_pred
+plt.scatter(y_test_pred, residuals, color='green', alpha=0.6, label='Residuals')
+plt.axhline(y=0, color='red', linestyle='--')
+plt.title('Residuals Plot (Test Set)')
+plt.xlabel('Predicted Values')
+plt.ylabel('Residuals')
+plt.legend()
+plt.show()
 
