@@ -18,6 +18,18 @@ def load_csv(file_path, target_column):
     return X, y
 
 X_raw, y_raw = load_csv(file_path, 'Quality_Score')
+
+
+'''if we dont have a heading in the csv file, and its just 2 coulms, we can do this:
+data = np.loadtxt(file_path, delimiter=",")
+X = np.array(data[:, 0])
+y = np.array(data[:, -1])
+
+if there are 3 or more columns (X1, X2, X3, y... etc) then we can just:
+data = np.loadtxt(file_path, delimiter=",")
+X = np.array(data[:, :-1])
+y = np.array(data[:, -1])
+'''
 # print(X_raw)
 # print(y_raw)
 
