@@ -60,13 +60,13 @@ def normalize_data(X):
 X_norm_train, mean, std = normalize_data(X_raw_train)
 # print(X_norm_train)
 
-def add_bias(X):
+def add_intercept(X):
 
     X_new = np.c_[np.ones(X.shape[0]), X]
 
     return X_new
 
-X_train = add_bias(X_norm_train)
+X_train = add_intercept(X_norm_train)
 # print(X_train)
 
 def direct_linreg(X, y):
